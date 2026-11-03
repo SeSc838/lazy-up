@@ -35,3 +35,18 @@ cargo build
 cargo test
 cargo clippy
 ```
+
+## Releasing
+
+Releases are created by CI when a `v*` tag is pushed (see `.github/workflows/release.yml`). The workflow first runs the full CI suite, then builds binaries and publishes a GitHub release with generated notes.
+
+1. Move the `[Unreleased]` entries in `CHANGELOG.md` under a new version heading and update the compare links at the bottom.
+2. Bump `version` in `Cargo.toml`, run `cargo build` so `Cargo.lock` is updated, and commit both on `main`.
+3. Tag and push:
+
+```sh
+git tag v0.2.1
+git push origin v0.2.1
+```
+
+The tag must match the version in `Cargo.toml`.
