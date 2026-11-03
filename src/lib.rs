@@ -6,19 +6,26 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::{Command, ExitStatus, Stdio};
 
+/// Directory holding the config file: `$HOME/.config/lazy-up`.
+///
+/// Panics if `HOME` is not set.
 fn settings_dir() -> PathBuf {
     let home = env::var("HOME").expect("HOME not set");
     PathBuf::from(home).join(".config").join("lazy-up")
 }
 
+/// Returns whether the config file `pkgs.yml` already exists.
 pub fn check_settings() -> bool {
     settings_dir().join("pkgs.yml").exists()
 }
 
+/// Writes the default config (`rust: rustup update`) to the user's config directory,
+/// creating the directory if needed.
 pub fn create_settings_file() -> std::io::Result<()> {
     create_settings_file_in(&settings_dir())
 }
 
+/// Like [`create_settings_file`], but writes into `dir` (split out so tests can use a temp dir).
 fn create_settings_file_in(dir: &Path) -> std::io::Result<()> {
     fs::create_dir_all(dir)?;
     fs::write(dir.join("pkgs.yml"), "rust: rustup update\n")
@@ -29,10 +36,13 @@ pub fn is_supported_os(os: &str) -> bool {
     matches!(os, "macos" | "linux")
 }
 
+/// Reads the user's config as a `name -> command` map, preserving file order.
 pub fn read_settings() -> Result<IndexMap<String, String>, Box<dyn Error>> {
     read_settings_from(&settings_dir().join("pkgs.yml"))
 }
 
+/// Parses the YAML config at `path`; errors name the file and cause (unreadable, malformed,
+/// or values that are not plain strings).
 fn read_settings_from(path: &Path) -> Result<IndexMap<String, String>, Box<dyn Error>> {
     let content =
         fs::read_to_string(path).map_err(|e| format!("could not read {}: {e}", path.display()))?;
@@ -59,6 +69,10 @@ pub fn update_pkg(pkg_name: &str, command: &str) -> std::io::Result<()> {
     }
 }
 
+/// Spawns `command` directly (no shell) and waits for it, inheriting stdio.
+///
+/// The string is split on whitespace, so quoting, pipes and redirects are not supported.
+/// A blank command yields an `InvalidInput` error.
 fn run_command(command: &str) -> std::io::Result<ExitStatus> {
     let mut parts = command.split_whitespace();
     let program = parts
