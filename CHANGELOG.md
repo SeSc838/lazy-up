@@ -7,7 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-03
+
 ### Added
+- Linux arm64 (`aarch64-unknown-linux-gnu`) support: the release workflow now builds and publishes a binary for it on a native arm64 runner, and CI runs the tests on arm64 Linux too.
 - GitHub Actions CI running tests (Linux and macOS), `rustfmt` and `clippy` on every pull request.
 - Release workflow: pushing a `v*` tag runs CI, builds binaries and publishes a GitHub release.
 - Unit tests.
@@ -27,5 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `lazy-up` CLI that runs user-defined package-update commands from `~/.config/lazy-up/pkgs.yml`.
 - `--pkg` option to update a single package (default: `all`).
 
-[Unreleased]: https://github.com/SeSc838/lazy-up/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/SeSc838/lazy-up/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/SeSc838/lazy-up/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/SeSc838/lazy-up/releases/tag/v0.2.0
